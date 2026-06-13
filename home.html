@@ -4,19 +4,80 @@
   .fixture-card { background: linear-gradient(145deg, #131926 0%, #0e1320 100%); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 14px; padding: 16px; color: #ffffff; display: block; transition: all 0.2s ease; cursor: pointer; text-decoration: none; border-left: 4px solid #1e294b; }
   .fixture-card:hover { transform: translateY(-2px); border-color: rgba(0, 255, 102, 0.25); }
   .btn-watch { background: #00ff66; color: #000000; font-size: 12px; font-weight: 800; padding: 8px 14px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,255,102,0.2); border: none; cursor: pointer; text-transform: uppercase; }
+  .loading-msg { text-align: center; color: #3b485f; padding: 30px; font-size: 13px; font-family: monospace; letter-spacing: 0.5px; }
 </style>
 
-<div class="section-lbl">Live Fixtures Schedule</div>
-<div class="grid-box">
+<div class="section-lbl">Stream Sports BD - Live Schedule</div>
+<div class="grid-box" id="live-schedule-grid">
+  <div class="loading-msg">🔄 RUNNING_CORE_METRICS...</div>
+</div>
 
-  <div class="fixture-card" onclick="navigateTo('usa-vs-paraguay.html')">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <div>
-        <span style="background: rgba(255,255,255,0.06); color: #8fa0c5; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">MATCH HUB</span>
-        <div style="font-size: 15px; font-weight: 700; margin-top: 5px;">USA vs Paraguay</div>
-      </div>
-      <button class="btn-watch">Enter Match</button>
-    </div>
-  </div>
+<script>
+(async function() {
+  const grid = document.getElementById("live-schedule-grid");
+  
+  // 🟢 We check 5 active live slots simultaneously 
+  const matchSlots = ['m1.html', 'm2.html', 'm3.html', 'm4.html', 'm5.html'];
+  
+  try {
+    grid.innerHTML = ""; 
+    let matchesShowing = false;
 
-  </div>
+    // Scan slots in parallel for max performance
+    const fetchPromises = matchSlots.map(file => 
+      fetch(`pages/${file}`)
+        .then(res => res.ok ? res.text().then(html => ({ file, html })) : null)
+        .catch(() => null)
+    );
+
+    const results = await Promise.all(fetchPromises);
+
+    for (let result of results) {
+      if (!result) continue;
+      
+      const { file, htmlText } = { file: result.file, htmlText: result.html };
+      
+      const titleMatch = htmlText.match(/<title>(.*?)<\/title>/);
+      const kickoffMatch = htmlText.match(/data-kickoff="(.*?)"/);
+      const tagMatch = htmlText.match(/data-tag="(.*?)"/);
+
+      if (!titleMatch || !kickoffMatch) continue;
+
+      const title = titleMatch[1].replace(" - Stream Sports BD", "");
+      const kickoffStr = kickoffMatch[1];
+      const tag = tagMatch ? tagMatch[1] : "LIVE STREAM";
+
+      const kickoffMs = new Date(kickoffStr).getTime();
+      const currentMs = new Date().getTime();
+      const expiryMs = kickoffMs + (2.5 * 60 * 60 * 1000); 
+
+      // If a match is expired, it won't show up on screen
+      if (currentMs >= expiryMs) continue;
+
+      matchesShowing = true;
+
+      const card = document.createElement("div");
+      card.className = "fixture-card";
+      card.onclick = () => navigateTo(`pages/${file}`);
+      
+      card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span style="background: rgba(0,255,102,0.1); color: #00ff66; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;">${tag}</span>
+            <div style="font-size: 15px; font-weight: 700; margin-top: 5px;">${title}</div>
+          </div>
+          <button class="btn-watch">Watch Match</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    }
+
+    if (!matchesShowing) {
+      grid.innerHTML = '<div class="loading-msg">[SYS_STATUS: IDLE_MODE_0x4]</div>';
+    }
+
+  } catch(e) {
+    grid.innerHTML = '<div class="loading-msg">[DATA_LINK_RESOLVER: SYNC_WAIT]</div>';
+  }
+})();
+</script>
