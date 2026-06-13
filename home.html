@@ -1,28 +1,23 @@
 <div class="section-title">Current Match Schedule</div>
-<div class="grid-box" id="live-schedule-grid">
-  <div class="loading-msg">🔄 Scanning...</div>
-</div>
+<div class="grid-box" id="live-schedule-grid"></div>
 
 <script>
-  (async function() {
-    const grid = document.getElementById("live-schedule-grid");
-    // Change these names to match EXACTLY what you named your files in the /pages folder
-    const filesToFind = ["m1.html", "match-1.html"]; 
-    
-    let found = false;
-    for (const fileName of filesToFind) {
-      try {
-        const res = await fetch(`pages/${fileName}`);
-        if (res.ok) {
-          const text = await res.text();
-          if (text.includes("serverFeeds")) {
-            // If it finds the file and the data, it triggers the card
-            found = true;
-            // ... (Your card generation code here)
-          }
-        }
-      } catch (e) { console.error("Error fetching", fileName); }
+  const matches = [
+    { 
+      name: "Qatar vs Switzerland", 
+      streams: [
+        {name: "Main Server", url: "https://embed.st/embed/admin/ppv-qatar-vs-switzerland/1"},
+        {name: "Backup 1", url: "https://embed.st/embed/admin/ppv-qatar-vs-switzerland/3"}
+      ]
     }
-    if (!found) grid.innerHTML = "No matches found. Check if pages/m1.html exists.";
-  })();
+  ];
+
+  const grid = document.getElementById("live-schedule-grid");
+  matches.forEach(match => {
+    const card = document.createElement("div");
+    card.className = "fixture-card";
+    card.innerHTML = `<div class="match-title-text">${match.name}</div><button class="btn-watch">Watch Now</button>`;
+    card.onclick = () => navigateTo("player.html", match);
+    grid.appendChild(card);
+  });
 </script>
