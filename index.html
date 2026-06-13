@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stream Sports BD - Premium Hub</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="wrapper">
+    <div class="header-container">
+      <div>
+        <h1>🇧🇩 Stream Sports BD</h1>
+        <div class="subtitle">Premium Static Deployment Matrix</div>
+      </div>
+    </div>
+
+    <div id="app-viewport">
+      <div class="loading-msg">⏳ Connecting core architecture pipelines...</div>
+    </div>
+  </div>
+
+  <script>
+    // Universal Global Clientside Parameter Router Engine
+    window.currentRouteParams = null;
+
+    async function navigateTo(targetPage, parameters = null) {
+      window.currentRouteParams = parameters;
+      const viewport = document.getElementById("app-viewport");
+      
+      try {
+        const res = await fetch(targetPage);
+        if (res.ok) {
+          viewport.innerHTML = await res.text();
+
+          // Safely target and re-execute nested inline page script modules
+          const scripts = viewport.getElementsByTagName("script");
+          for (let script of scripts) {
+            const freshScript = document.createElement("script");
+            if (script.src) {
+              freshScript.src = script.src;
+            } else {
+              freshScript.text = script.text;
+            }
+            document.head.appendChild(freshScript).parentNode.removeChild(freshScript);
+          }
+        } else {
+          viewport.innerHTML = `<div class="loading-msg">❌ Framework Route Load Failure: ${targetPage}</div>`;
+        }
+      } catch (e) {
+        viewport.innerHTML = '<div class="loading-msg">❌ Network Communication Interrupted.</div>';
+      }
+    }
+
+    // Default Startup Action: Boot up directly into your homepage list array
+    navigateTo("home.html");
+  </script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+/* Custom Global Interface Stylesheet Matrix */
+body { 
+  font-family: 'Segoe UI', Roboto, -apple-system, sans-serif; 
+  background: #070f24; 
+  color: #ffffff; 
+  margin: 0; 
+  padding: 15px; 
+}
+
+.wrapper { 
+  max-width: 650px; 
+  margin: 20px auto; 
+  background: #0f1424; 
+  padding: 22px; 
+  border-radius: 14px; 
+  border: 1px solid rgba(255,255,255,0.05); 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+  box-sizing: border-box; 
+}
+
+.header-container {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 20px;
+}
+
+h1 { 
+  font-size: 22px; 
+  font-weight: 900; 
+  color: #00ff66; 
+  margin: 0 0 5px 0; 
+}
+
+.subtitle { 
+  color: #6b7c96; 
+  font-size: 12px; 
+  margin-bottom: 5px; 
+}
+
+.section-title { 
+  font-size: 13px; 
+  font-weight: 700; 
+  text-transform: uppercase; 
+  letter-spacing: 1px; 
+  color: #8fa0c5; 
+  margin-bottom: 15px; 
+  border-left: 3px solid #00ff66; 
+  padding-left: 8px; 
+}
+
+.grid-box { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 14px; 
+}
+
+/* Card Configurations */
+.fixture-card { 
+  background: linear-gradient(145deg, #131926 0%, #0e1320 100%); 
+  border: 1px solid rgba(255, 255, 255, 0.03); 
+  border-radius: 14px; 
+  padding: 16px; 
+  color: #ffffff; 
+  transition: all 0.2s ease; 
+  cursor: pointer;
+  border-left: 4px solid #1e294b; 
+}
+
+.fixture-card:hover { 
+  transform: translateY(-2px); 
+  border-left-color: #00ff66;
+  background: #151d2f;
+}
+
+.card-inner-flex {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  width: 100%;
+}
+
+.status-badge-pill {
+  background: rgba(0,255,102,0.1); 
+  color: #00ff66; 
+  font-size: 10px; 
+  font-weight: 700; 
+  padding: 2px 8px; 
+  border-radius: 4px; 
+  text-transform: uppercase;
+}
+
+.match-title-text {
+  font-size: 15px; 
+  font-weight: 700; 
+  margin-top: 5px;
+}
+
+/* Button UI Components */
+.btn-watch { 
+  background: #00ff66; 
+  color: #000000; 
+  font-size: 12px; 
+  font-weight: 800; 
+  padding: 8px 14px; 
+  border-radius: 8px; 
+  border: none; 
+  cursor: pointer; 
+  text-transform: uppercase; 
+  box-shadow: 0 4px 10px rgba(0,255,102,0.15);
+  transition: background 0.2s;
+}
+
+.btn-watch:hover {
+  background: #00cc52;
+}
+
+.back-nav { 
+  background: #192239; 
+  color: #ffffff; 
+  border: 1px solid rgba(255,255,255,0.1); 
+  padding: 8px 16px; 
+  border-radius: 8px; 
+  font-size: 13px; 
+  font-weight: bold; 
+  cursor: pointer; 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 6px; 
+  margin-bottom: 15px; 
+  transition: all 0.2s; 
+}
+
+.back-nav:hover { 
+  color: #00ff66; 
+  background: #223054; 
+  border-color: rgba(0,255,102,0.3); 
+}
+
+/* Video Player Layout Panels */
+.screen-box { 
+  position: relative; 
+  width: 100%; 
+  padding-top: 56.25%; 
+  background: #000000; 
+  border-radius: 12px; 
+  overflow: hidden; 
+  box-shadow: 0 4px 25px rgba(0,0,0,0.6); 
+  border: 1px solid rgba(255,255,255,0.03); 
+}
+
+.screen-box iframe { 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  border: none; 
+}
+
+.control-strip { 
+  margin: 15px 0; 
+  padding: 12px; 
+  background: #131926; 
+  border-radius: 10px; 
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+  flex-wrap: wrap; 
+  border: 1px solid rgba(255,255,255,0.05); 
+}
+
+.strip-label {
+  color: #8fa0c5; 
+  font-size: 11px; 
+  font-weight: 700; 
+  text-transform: uppercase;
+}
+
+.srv-tab { 
+  background: #1e294b; 
+  color: #ffffff; 
+  padding: 6px 12px; 
+  border-radius: 6px; 
+  cursor: pointer; 
+  font-size: 12px; 
+  border: none; 
+  transition: background 0.2s;
+}
+
+.srv-tab.active { 
+  background: #ff0055; 
+  font-weight: bold; 
+}
+
+.player-header-text {
+  font-size: 18px; 
+  font-weight: 800; 
+  margin: 15px 0 6px 0; 
+  color: #ffffff; 
+  line-height: 1.4;
+}
+
+.player-footer-status {
+  color: #6b7c96; 
+  font-size: 13px; 
+  display: flex; 
+  align-items: center; 
+  gap: 5px;
+}
+
+.live-signal-dot {
+  width: 7px; 
+  height: 7px; 
+  background: #00ff66; 
+  border-radius: 50%; 
+  display: inline-block;
+}
+
+.loading-msg { 
+  text-align: center; 
+  color: #4a5568; 
+  padding: 20px; 
+  font-size: 13px; 
+  font-family: monospace; 
+}

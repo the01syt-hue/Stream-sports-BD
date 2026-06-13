@@ -1,0 +1,67 @@
+<div class="section-title">Current Match Schedule</div>
+<div class="grid-box" id="live-schedule-grid">
+  <div class="loading-msg">🔄 Sweeping local data paths...</div>
+</div>
+
+<script>
+  (async function runLocalSlotScanner() {
+    const grid = document.getElementById("live-schedule-grid");
+    grid.innerHTML = "";
+    let matchesShowing = false;
+
+    // The core scan queue array. Simply add any standalone names you want to check here!
+    const scanQueue = ["m1.html", "m2.html"];
+    
+    // This loop automatically generates search parameters from match-1.html up to match-10.html
+    for (let i = 1; i <= 10; i++) {
+      scanQueue.push(`match-${i}.html`);
+    }
+
+    for (const fileName of scanQueue) {
+      const filePath = `pages/${fileName}`;
+
+      try {
+        const res = await fetch(filePath);
+        if (res.ok) {
+          const htmlText = await res.text();
+          
+          // Native pattern match extraction layer for layout elements
+          const titleMatch = htmlText.match(/<title>(.*?)<\/title>/);
+          const tagMatch = htmlText.match(/data-tag="(.*?)"/);
+          const payloadMatch = htmlText.match(/serverFeeds = (.*?);/);
+
+          if (titleMatch && payloadMatch) {
+            const title = titleMatch[1].replace(" - Stream Sports BD", "");
+            const tag = tagMatch ? tagMatch[1] : "LIVE";
+            const streamsArray = JSON.parse(payloadMatch[1]);
+
+            matchesShowing = true;
+
+            const card = document.createElement("div");
+            card.className = "fixture-card";
+            
+            // Forwards structural channel payloads straight to the player screen engine
+            card.onclick = () => navigateTo("player.html", { name: title, streams: streamsArray });
+            
+            card.innerHTML = `
+              <div class="card-inner-flex">
+                <div>
+                  <span class="status-badge-pill">${tag}</span>
+                  <div class="match-title-text">${title}</div>
+                </div>
+                <button class="btn-watch">Watch</button>
+              </div>
+            `;
+            grid.appendChild(card);
+          }
+        }
+      } catch (e) {
+        // Skips missing slots silently without logging messy error messages
+      }
+    }
+
+    if (!matchesShowing) {
+      grid.innerHTML = '<div class="loading-msg">[SYS_STATUS: NO_ACTIVE_BROADCAST_FEEDS]</div>';
+    }
+  })();
+</script>

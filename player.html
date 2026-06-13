@@ -1,0 +1,53 @@
+<button class="back-nav" onclick="navigateTo('home.html')">⬅️ Back to Schedule</button>
+
+<div class="screen-box">
+  <iframe id="stream-screen" src="" allowfullscreen="yes" allow="encrypted-media;"></iframe>
+</div>
+
+<div class="control-strip">
+  <span class="strip-label">Select Active Stream Node:</span>
+  <div id="feeds-wrapper" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+</div>
+
+<h2 id="stream-title" class="player-header-text">Match Stream Loading...</h2>
+<div class="player-footer-status">
+  <span class="live-signal-dot"></span> High Performance Broadcast Feed Active
+</div>
+
+<script>
+  (function() {
+    const data = window.currentRouteParams;
+    
+    // Quick validation fallbacks
+    if (!data || !data.streams || data.streams.length === 0) {
+      navigateTo("home.html");
+      return;
+    }
+
+    document.getElementById("stream-title").innerText = data.name;
+    const player = document.getElementById("stream-screen");
+    const container = document.getElementById("feeds-wrapper");
+
+    // Initialize playback framework using feed slot index 0
+    player.src = data.streams[0].url || data.streams[0];
+
+    // Map out action trigger buttons dynamically 
+    data.streams.forEach((feedItem, index) => {
+      const button = document.createElement("button");
+      button.className = `srv-tab ${index === 0 ? 'active' : ''}`;
+      button.innerText = feedItem.name || `Server ${index + 1}`;
+      
+      const targetUrl = feedItem.url || feedItem;
+
+      button.onclick = () => {
+        player.src = targetUrl;
+        const buttons = container.getElementsByClassName("srv-tab");
+        for (let btn of buttons) {
+          btn.classList.remove("active");
+        }
+        button.classList.add("active");
+      };
+      container.appendChild(button);
+    });
+  })();
+</script>
