@@ -1,55 +1,57 @@
-<button class="back-nav" onclick="navigateTo('home.html')">⬅️ Back to Schedule</button>
+<style>
+  .back-nav { background: #192239; color: #ffffff; border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 15px; border: none; }
+  .back-nav:hover { color: #00ff66; background: #223054; }
+  .screen-box { position: relative; width: 100%; padding-top: 56.25%; background: #000000; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+  .screen-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+  .control-strip { margin: 15px 0; padding: 12px; background: #131926; border-radius: 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border: 1px solid rgba(255,255,255,0.05); }
+  .srv-tab { background: #242f4d; color: #ffffff; border: 1px solid rgba(255,255,255,0.08); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; }
+  .srv-tab.active { background: #ff0055; border-color: #ff0055; font-weight: bold; }
+</style>
 
-<div style="text-align: center; margin-bottom: 10px;">
-  <span id="timer" class="status-pill" style="font-family: monospace;">⏳ Syncing...</span>
+<!-- Clean Navigation Strip -->
+<button class="back-nav" onclick="navigateTo('home.html')">🏠 Return Home</button>
+
+<!-- Aspect Player View -->
+<div class="screen-box">
+  <iframe id="stream-screen" src="" allowfullscreen="yes" allow="encrypted-media;"></iframe>
 </div>
 
-<div id="player-container" style="display: none;">
-  <div class="screen-box"><iframe id="video" src="" allowfullscreen="yes"></iframe></div>
-  <div class="control-strip" id="strip"></div>
+<!-- Servers Controller Layout Panel -->
+<div class="control-strip">
+  <span style="color: #8fa0c5; font-size: 13px; font-weight: bold; margin-right: 5px;">SELECT FEED:</span>
+  <div id="feeds-wrapper" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
 </div>
 
-<h2 id="title" class="player-header-text"></h2>
+<h2 id="stream-title" style="font-size: 19px; font-weight: 800; margin: 15px 0 5px 0;">Match Stream</h2>
+<div style="color: #6b7c96; font-size: 13px;">● High Definition Secure Broadcast Connection Protocol</div>
 
 <script>
   (function() {
     const data = window.currentRouteParams;
-    const timer = document.getElementById('timer');
-    const container = document.getElementById('player-container');
-    const video = document.getElementById('video');
-    const strip = document.getElementById('strip');
-
-    if (!data) { navigateTo("home.html"); return; }
-    document.getElementById("title").innerText = data.name;
-
-    const kickoffMs = new Date(data.kickoff).getTime();
-
-    function updateTimer() {
-      const now = new Date().getTime();
-      const diff = kickoffMs - now;
-
-      if (diff <= 0) {
-        timer.innerText = "● LIVE NOW";
-        timer.style.color = "#ff0055";
-        container.style.display = "block";
-        if (!video.src) {
-          video.src = data.streams[0].url;
-          data.streams.forEach((s, i) => {
-            const btn = document.createElement("button");
-            btn.className = `srv-tab ${i === 0 ? 'active' : ''}`;
-            btn.innerText = s.name;
-            btn.onclick = () => { video.src = s.url; document.querySelectorAll('.srv-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); };
-            strip.appendChild(btn);
-          });
-        }
-      } else {
-        const h = Math.floor(diff / 3600000);
-        const m = Math.floor((diff % 3600000) / 60000);
-        const s = Math.floor((diff % 60000) / 1000);
-        timer.innerText = `STARTS IN: ${h}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-      }
+    if (!data || !data.streams) {
+      navigateTo("home.html");
+      return;
     }
-    updateTimer();
-    activeInterval = setInterval(updateTimer, 1000);
+
+    document.getElementById("stream-title").innerText = data.name;
+    const player = document.getElementById("stream-screen");
+    const container = document.getElementById("feeds-wrapper");
+
+    // Initialize default server load index 0
+    player.src = data.streams[0];
+
+    // Build Server buttons list dynamically based on item clicked
+    data.streams.forEach((url, index) => {
+      const button = document.createElement("button");
+      button.className = `srv-tab ${index === 0 ? 'active' : ''}`;
+      button.innerText = `Server ${index + 1}`;
+      
+      button.onclick = () => {
+        player.src = url;
+        document.querySelectorAll('.srv-tab').forEach(b => b.classList.remove('active'));
+        button.classList.add('active');
+      };
+      container.appendChild(button);
+    });
   })();
 </script>
