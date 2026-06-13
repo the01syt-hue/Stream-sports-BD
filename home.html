@@ -9,11 +9,11 @@
     grid.innerHTML = "";
     let matchesShowing = false;
 
-    // The core scan queue array. Simply add any standalone names you want to check here!
-    const scanQueue = ["m1.html", "m2.html"];
+    // The optimized core scanning list queue matrix
+    const scanQueue = ["m1.html", "m2.html", "m3.html"];
     
-    // This loop automatically generates search parameters from match-1.html up to match-10.html
-    for (let i = 1; i <= 20; i++) {
+    // Generates search routes from match-1.html up to match-10.html completely automatically
+    for (let i = 1; i <= 10; i++) {
       scanQueue.push(`match-${i}.html`);
     }
 
@@ -25,7 +25,6 @@
         if (res.ok) {
           const htmlText = await res.text();
           
-          // Native pattern match extraction layer for layout elements
           const titleMatch = htmlText.match(/<title>(.*?)<\/title>/);
           const tagMatch = htmlText.match(/data-tag="(.*?)"/);
           const payloadMatch = htmlText.match(/serverFeeds = (.*?);/);
@@ -40,7 +39,7 @@
             const card = document.createElement("div");
             card.className = "fixture-card";
             
-            // Forwards structural channel payloads straight to the player screen engine
+            // Forward channel structural array data directly into your core active router engine
             card.onclick = () => navigateTo("player.html", { name: title, streams: streamsArray });
             
             card.innerHTML = `
@@ -56,7 +55,7 @@
           }
         }
       } catch (e) {
-        // Skips missing slots silently without logging messy error messages
+        // Skips unassigned paths quietly
       }
     }
 
