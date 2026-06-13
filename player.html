@@ -1,29 +1,55 @@
-<button class="back-nav" onclick="navigateTo('home.html')">⬅️ Back</button>
-<div class="screen-box"><iframe id="stream-screen" allowfullscreen="yes"></iframe></div>
-<div class="control-strip" id="feeds-wrapper"></div>
-<h2 id="stream-title"></h2>
+<button class="back-nav" onclick="navigateTo('home.html')">⬅️ Back to Schedule</button>
+
+<div style="text-align: center; margin-bottom: 10px;">
+  <span id="timer" class="status-pill" style="font-family: monospace;">⏳ Syncing...</span>
+</div>
+
+<div id="player-container" style="display: none;">
+  <div class="screen-box"><iframe id="video" src="" allowfullscreen="yes"></iframe></div>
+  <div class="control-strip" id="strip"></div>
+</div>
+
+<h2 id="title" class="player-header-text"></h2>
 
 <script>
   (function() {
     const data = window.currentRouteParams;
+    const timer = document.getElementById('timer');
+    const container = document.getElementById('player-container');
+    const video = document.getElementById('video');
+    const strip = document.getElementById('strip');
+
     if (!data) { navigateTo("home.html"); return; }
+    document.getElementById("title").innerText = data.name;
 
-    document.getElementById("stream-title").innerText = data.name;
-    const player = document.getElementById("stream-screen");
-    const wrapper = document.getElementById("feeds-wrapper");
+    const kickoffMs = new Date(data.kickoff).getTime();
 
-    player.src = data.streams[0].url;
+    function updateTimer() {
+      const now = new Date().getTime();
+      const diff = kickoffMs - now;
 
-    data.streams.forEach((feed, index) => {
-      const btn = document.createElement("button");
-      btn.className = `srv-tab ${index === 0 ? 'active' : ''}`;
-      btn.innerText = feed.name;
-      btn.onclick = () => {
-        player.src = feed.url;
-        document.querySelectorAll('.srv-tab').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      };
-      wrapper.appendChild(btn);
-    });
+      if (diff <= 0) {
+        timer.innerText = "● LIVE NOW";
+        timer.style.color = "#ff0055";
+        container.style.display = "block";
+        if (!video.src) {
+          video.src = data.streams[0].url;
+          data.streams.forEach((s, i) => {
+            const btn = document.createElement("button");
+            btn.className = `srv-tab ${i === 0 ? 'active' : ''}`;
+            btn.innerText = s.name;
+            btn.onclick = () => { video.src = s.url; document.querySelectorAll('.srv-tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); };
+            strip.appendChild(btn);
+          });
+        }
+      } else {
+        const h = Math.floor(diff / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        timer.innerText = `STARTS IN: ${h}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+      }
+    }
+    updateTimer();
+    activeInterval = setInterval(updateTimer, 1000);
   })();
 </script>
