@@ -1,27 +1,22 @@
-<div class="section-title">Upcoming Live Matches</div>
-<div class="grid-box" id="grid">
-  <div class="loading-msg">🔄 Syncing with Database...</div>
-</div>
+<style>
+  .section-lbl { font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #8fa0c5; margin-bottom: 15px; }
+  .grid-box { display: flex; flex-direction: column; gap: 14px; }
+  .fixture-card { background: linear-gradient(145deg, #131926 0%, #0e1320 100%); border: 1px solid rgba(255, 255, 255, 0.03); border-radius: 14px; padding: 16px; color: #ffffff; display: block; transition: all 0.2s ease; cursor: pointer; text-decoration: none; border-left: 4px solid #1e294b; }
+  .fixture-card:hover { transform: translateY(-2px); border-color: rgba(0, 255, 102, 0.25); }
+  .btn-watch { background: #00ff66; color: #000000; font-size: 12px; font-weight: 800; padding: 8px 14px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,255,102,0.2); border: none; cursor: pointer; text-transform: uppercase; }
+</style>
 
-<script>
-  (async function() {
-    const GIST_URL = "https://gist.githubusercontent.com/the01syt-hue/26bacc389c37d89f33c8d4481f37910c/raw/92e66be26860209b2e0d5a91b350d57d009db9e7/shedule.json";
-    const grid = document.getElementById("grid");
+<div class="section-lbl">Live Fixtures Schedule</div>
+<div class="grid-box">
 
-    try {
-      const res = await fetch(GIST_URL);
-      const matches = await res.json();
-      grid.innerHTML = ""; 
+  <div class="fixture-card" onclick="navigateTo('usa-vs-paraguay.html')">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <span style="background: rgba(255,255,255,0.06); color: #8fa0c5; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">MATCH HUB</span>
+        <div style="font-size: 15px; font-weight: 700; margin-top: 5px;">USA vs Paraguay</div>
+      </div>
+      <button class="btn-watch">Enter Match</button>
+    </div>
+  </div>
 
-      matches.forEach(m => {
-        const card = document.createElement("div");
-        card.className = "fixture-card";
-        card.innerHTML = `<div class="match-title-text">${m.name}</div><button class="btn-watch">Watch Now</button>`;
-        card.onclick = () => navigateTo("player.html", m);
-        grid.appendChild(card);
-      });
-    } catch (e) {
-      grid.innerHTML = "<div class='loading-msg'>❌ Unable to sync schedule.</div>";
-    }
-  })();
-</script>
+  </div>
