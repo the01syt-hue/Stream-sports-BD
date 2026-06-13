@@ -3,34 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stream Sports BD - Premium Hub</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Stream Sports BD - Live Streaming Matrix</title>
+  <style>
+    body { font-family: 'Roboto', Arial, sans-serif; background: #070f24; color: #ffffff; margin: 0; padding: 0; min-height: 100vh; }
+    .global-wrapper { max-width: 650px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+    header h1 { font-size: 24px; font-weight: 900; margin: 0; letter-spacing: 0.5px; color: #ffffff; }
+    header p { margin: 4px 0 0 0; font-size: 12px; color: #6b7c96; }
+    .utc-clock { font-size: 12px; color: #00ff66; background: rgba(0,255,102,0.08); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(0,255,102,0.2); font-family: monospace; font-weight: bold; }
+    #view-viewport { animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
 </head>
 <body>
-  <div class="wrapper">
-    <div class="header-container">
-      <h1>🇧🇩 Stream Sports BD</h1>
-    </div>
-    <div id="app-viewport"></div>
+
+  <div class="global-wrapper">
+    <!-- Main Network Top Header Bar -->
+    <header>
+      <div>
+        <h1>🇧🇩 Stream Sports BD</h1>
+        <p>Premium Live Streaming Matrix</p>
+      </div>
+      <div class="utc-clock" id="system-clock">00:00:00 UTC+6</div>
+    </header>
+
+    <!-- Dynamic Content Target Viewport -->
+    <main id="view-viewport">
+      <!-- Subpages deploy here automatically -->
+    </main>
   </div>
 
   <script>
-    window.currentRouteParams = null;
-    async function navigateTo(targetPage, parameters = null) {
+    // System Clock Engine Syncing your exact Local Time (UTC+6)
+    setInterval(() => {
+      const local = new Date();
+      const utc = local.getTime() + (local.getTimezoneOffset() * 60000);
+      const utc6 = new Date(utc + (3600000 * 6));
+      document.getElementById('system-clock').innerText = utc6.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'}) + " (UTC+6)";
+    }, 1000);
+
+    // Dynamic Navigation Routing Engine
+    function navigateTo(pageUrl, parameters = {}) {
       window.currentRouteParams = parameters;
-      const viewport = document.getElementById("app-viewport");
-      const res = await fetch(targetPage);
-      if (res.ok) {
-        viewport.innerHTML = await res.text();
-        const scripts = viewport.querySelectorAll("script");
-        scripts.forEach(oldScript => {
-          const newScript = document.createElement("script");
-          newScript.textContent = oldScript.textContent;
-          document.body.appendChild(newScript);
+      fetch(pageUrl)
+        .then(res => res.text())
+        .then(html => {
+          const viewport = document.getElementById("view-viewport");
+          viewport.innerHTML = html;
+          
+          // Execute isolated javascript logic inside loaded pages cleanly
+          const scripts = viewport.querySelectorAll("script");
+          scripts.forEach(oldScript => {
+            const newScript = document.createElement("script");
+            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+            oldScript.parentNode.replaceChild(newScript, oldScript);
+          });
         });
-      }
     }
-    navigateTo("home.html");
+
+    // Default Initialization Landing Load
+    window.addEventListener("DOMContentLoaded", () => navigateTo("home.html"));
   </script>
 </body>
 </html>
