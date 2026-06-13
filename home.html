@@ -1,23 +1,27 @@
-<div class="section-title">Current Match Schedule</div>
-<div class="grid-box" id="live-schedule-grid"></div>
+<div class="section-title">Upcoming Live Matches</div>
+<div class="grid-box" id="grid">
+  <div class="loading-msg">🔄 Syncing with Database...</div>
+</div>
 
 <script>
-  const matches = [
-    { 
-      name: "Qatar vs Switzerland", 
-      streams: [
-        {name: "Main Server", url: "https://embed.st/embed/admin/ppv-qatar-vs-switzerland/1"},
-        {name: "Backup 1", url: "https://embed.st/embed/admin/ppv-qatar-vs-switzerland/3"}
-      ]
-    }
-  ];
+  (async function() {
+    const GIST_URL = "https://gist.githubusercontent.com/the01syt-hue/4b8665d8cc6ecc2f5deff8c5886fa470/raw/5b0e7660a88b0a68250129d318373bc93c3ae08e/gistfile1.json";
+    const grid = document.getElementById("grid");
 
-  const grid = document.getElementById("live-schedule-grid");
-  matches.forEach(match => {
-    const card = document.createElement("div");
-    card.className = "fixture-card";
-    card.innerHTML = `<div class="match-title-text">${match.name}</div><button class="btn-watch">Watch Now</button>`;
-    card.onclick = () => navigateTo("player.html", match);
-    grid.appendChild(card);
-  });
+    try {
+      const res = await fetch(GIST_URL);
+      const matches = await res.json();
+      grid.innerHTML = ""; 
+
+      matches.forEach(m => {
+        const card = document.createElement("div");
+        card.className = "fixture-card";
+        card.innerHTML = `<div class="match-title-text">${m.name}</div><button class="btn-watch">Watch Now</button>`;
+        card.onclick = () => navigateTo("player.html", m);
+        grid.appendChild(card);
+      });
+    } catch (e) {
+      grid.innerHTML = "<div class='loading-msg'>❌ Unable to sync schedule.</div>";
+    }
+  })();
 </script>
