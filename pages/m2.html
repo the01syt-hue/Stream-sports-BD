@@ -1,0 +1,85 @@
+<meta data-tag="FIFA World Cup" data-kickoff="2026-06-13T19:00:00.000Z">
+<title>Qatar vs Switzerland - Stream Sports BD</title>
+<style>
+  .back-nav { background: #192239; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; border: none; margin-bottom: 15px; display: inline-flex; align-items: center; }
+  .back-nav:hover { color: #00ff66; background: #223054; }
+  .screen-box { position: relative; width: 100%; padding-top: 56.25%; background: #000000; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.03); }
+  .screen-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+  .control-strip { margin: 15px 0; padding: 12px; background: #131926; border-radius: 10px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border: 1px solid rgba(255,255,255,0.05); }
+  .srv-tab-node { background: #1e294b; color: #ffffff; border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; border: none; }
+  .srv-tab-node.active-feed { background: #ff0055; font-weight: bold; }
+  .status-pill { background: #131926; color: #00ff66; font-family: monospace; padding: 6px 12px; font-weight: bold; border-radius: 6px; font-size: 13px; display: inline-block; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
+</style>
+
+<button class="back-nav" onclick="navigateTo('home.html')">⬅️ Back to Schedule</button>
+
+<div style="text-align: center;">
+  <span class="status-pill" id="page-timer-radar">⏳ Syncing Radar...</span>
+</div>
+
+<div id="player-view-wrapper" style="display: none;">
+  <div class="screen-box">
+    <iframe id="video-frame-screen" src="" allowfullscreen="yes" allow="encrypted-media;"></iframe>
+  </div>
+  <div class="control-strip">
+    <span style="color: #8fa0c5; font-size: 13px; font-weight: bold; margin-right: 5px;">SELECT FEED:</span>
+    <div id="servers-strip" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+  </div>
+</div>
+
+<h2 style="font-size: 20px; font-weight: 800; margin: 15px 0 5px 0;">Qatar vs Switzerland</h2>
+<div style="color: #6b7c96; font-size: 13px; margin-bottom: 20px;">● Stream Sports BD Premium Dynamic Feed</div>
+
+<script>
+(function() {
+  const targetKickoff = "2026-06-13T19:00:00.000Z";
+  const serverFeeds = [{"name":"Main Server","url":"https://embed.st/embed/admin/ppv-qatar-vs-switzerland/1"},{"name":"Backup Server 1","url":"https://embed.st/embed/admin/ppv-qatar-vs-switzerland/3"},{"name":"Backup Server 2","url":"https://embed.st/embed/admin/ppv-qatar-vs-switzerland/5"},{"name":"Backup Server 3","url":"https://embed.st/embed/golf/23094/1"}];
+  const kickoffMs = new Date(targetKickoff).getTime();
+  const durationLimitMs = 2.5 * 60 * 60 * 1000;
+
+  function checkMatchLifecycle() {
+    const currentMs = new Date().getTime();
+    const timeElapsed = currentMs - kickoffMs;
+    const radar = document.getElementById("page-timer-radar");
+    const playerWrapper = document.getElementById("player-view-wrapper");
+    const frame = document.getElementById("video-frame-screen");
+
+    if (timeElapsed >= durationLimitMs) {
+      radar.style.color = "#a0aec0"; radar.innerText = "🏁 Stream Concluded";
+      playerWrapper.style.display = "none"; frame.src = ""; return;
+    }
+    if (currentMs >= kickoffMs) {
+      radar.style.color = "#ff0055"; radar.innerText = "● LIVE NOW";
+      if (playerWrapper.style.display === "none") { playerWrapper.style.display = "block"; loadLocalFeeds(); }
+    } else {
+      const distance = kickoffMs - currentMs;
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      radar.innerText = "MATCH STARTS IN: " + (hours < 10 ? "0"+hours : hours) + ":" + (minutes < 10 ? "0"+minutes : minutes) + ":" + (seconds < 10 ? "0"+seconds : seconds);
+    }
+  }
+
+  function loadLocalFeeds() {
+    const strip = document.getElementById("servers-strip");
+    const frame = document.getElementById("video-frame-screen");
+    if (strip.children.length > 0) return;
+    
+    if (serverFeeds && serverFeeds.length > 0) {
+      frame.src = serverFeeds[0].url;
+      serverFeeds.forEach((srv, idx) => {
+        const btn = document.createElement("button");
+        btn.className = 'srv-tab-node' + (idx === 0 ? ' active-feed' : '');
+        btn.innerText = srv.name;
+        btn.onclick = () => { 
+          frame.src = srv.url; 
+          document.querySelectorAll('.srv-tab-node').forEach(b => b.classList.remove('active-feed')); 
+          btn.classList.add('active-feed'); 
+        };
+        strip.appendChild(btn);
+      });
+    }
+  }
+  checkMatchLifecycle(); setInterval(checkMatchLifecycle, 1000);
+})();
+</script>
